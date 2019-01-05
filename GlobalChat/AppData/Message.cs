@@ -15,9 +15,10 @@ namespace GlobalChat.AppData
     public partial class Message
     {
         public System.Guid Id { get; set; }
-        public Nullable<System.Guid> CreatedBy { get; set; }
-        public string Message1 { get; set; }
-        public Nullable<System.DateTime> CreatedAt { get; set; }
+        public System.Guid CreatedBy { get; set; }
+        public System.DateTime CreatedAtLocal { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
+        public string Text { get; set; }
     
         public virtual User User { get; set; }
     }

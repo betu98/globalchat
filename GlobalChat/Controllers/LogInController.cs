@@ -20,7 +20,7 @@ namespace GlobalChat.Controllers
         {
             using (var dbModel = new AppData.DbModel())
             {
-                var user = dbModel.Users.Where(x => x.Email == logInModel.Email && x.Password == logInModel.Password).FirstOrDefault();
+                var user = dbModel.User.Where(x => x.Email == logInModel.Email && x.Password == logInModel.Password).FirstOrDefault();
                 if(user == null)
                 {
                     ViewBag.Message = "Email or Password is incorect !";

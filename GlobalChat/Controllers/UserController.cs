@@ -49,19 +49,19 @@ namespace GlobalChat.Controllers
 
             using (var dbModel = new AppData.DbModel())
             {
-                if (dbModel.Users.Any(x => x.Nickname == user.Nickname))
+                if (dbModel.User.Any(x => x.Nickname == user.Nickname))
                 {
                     ViewBag.DuplicateMessage = "Nickname taken!";
                     return View(user);
                 }
 
-                if (dbModel.Users.Any(x => x.Email == user.Email))
+                if (dbModel.User.Any(x => x.Email == user.Email))
                 {
                     ViewBag.DuplicateMessage = "Email already exist!";
                     return View(user);
                 }
 
-                dbModel.Users.Add(userModel);
+                dbModel.User.Add(userModel);
                 dbModel.SaveChanges();
             }
             ModelState.Clear();

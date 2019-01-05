@@ -17,7 +17,7 @@ namespace GlobalChat.AppData
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public User()
         {
-            this.Messages = new HashSet<Message>();
+            this.Message = new HashSet<Message>();
         }
     
         public System.Guid Id { get; set; }
@@ -31,6 +31,6 @@ namespace GlobalChat.AppData
         public string Nickname { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<Message> Message { get; set; }
     }
 }

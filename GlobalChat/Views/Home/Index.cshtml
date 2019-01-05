@@ -1,27 +1,186 @@
 ﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
     ViewBag.Title = "Home Page";
-    if(Session["userId"] == null)
+    if (Session["userId"] == null)
     {
         Response.Redirect("~/LogIn/Authorize");
     }
 }
 
-<!DOCTYPE html>
+<style type="text/css">
+    #chat-container {
+        border: 1px solid red;
+        min-height: 200px;
+        border-radius: 4px;
+        padding: 5px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
 
-@*<html>
-<head>
-    <meta name="viewport" content="width = device-width" />
-    <title>GlobalChat</title>
+    .page-header {
+        display: table;
+        width: 100%;
+    }
 
-</head>
-<body>*@
-    <div>
-        <h1>AICI TREBUIA SA FIE CHAT-UL ...</h1>
-    </div>
+        .page-header a {
+            float: right;
+        }
 
-<div>
+    .mine {
+        text-align: right;
+    }
+
+    .message {
+        border: 1px solid red;
+        margin-bottom: 10px;
+        padding: 5px;
+        border-radius: 4px;
+        position: relative;
+    }
+
+        .message .name {
+            cursor: pointer;
+        }
+
+    .mine .name {
+        cursor: default;
+    }
+
+    .message-head {
+    }
+
+    .message-body {
+    }
+</style>
+
+<div class="page-header">
     <a href="@Url.Action("LogOut", "LogIn" )">Log Out</a>
 </div>
-@*</body>
 
-</html>*@
+<div id="chat-container">
+</div>
+<div class="chat-input">
+    <textarea rows="3" cols="200" id="chat-text"></textarea>
+    <input type="button" value="SEND" onclick="sendMessage();" />
+</div>
+
+@Scripts.Render("~/bundles/moment")
+@Scripts.Render("~/bundles/signalr")
+
+<script src="~/signalr/hubs"></script>
+
+<script type="text/javascript">
+    var messages = JSON.parse("@(ViewBag.Messages != null ? Html.Raw(HttpUtility.JavaScriptStringEncode(ViewBag.Messages)) : "[]")");
+    var $msgContainer = null;
+    var $msgText = null;
+
+    var chat = $.connection.chatHub;
+
+    chat.client.appendMessage = function (message) {
+        var msg = JSON.parse(message);
+
+        msg.IsMine = msg.UserId.toLocaleLowerCase() === "@Session["userId"]".toLocaleLowerCase();
+        msg.DateStr = moment(msg.DateStr).format("DD.MM.YYYY HH:mm");
+
+        appendMessage(msg);
+
+        scrollToLast();
+    };
+
+    function buildMessage(data) {
+        var isMine = data.IsMine ? "mine" : "";
+        var nameLabelOnClick = data.IsMine ? "" : "showUserDetails(\"" + data.UserId + "\"); ";
+        var msg =
+
+            " <div class=\"message " + isMine + "\" id=\"" + data.Id + "\">                                 " +
+            " <div class=\"message-head\">                                                                  " +
+            "     <lable>" + data.DateStr + "</lable>                                                       " +
+            " </div>                                                                                        " +
+            " <div class=\"message-body\">                                                                  " +
+            "     <label class=\"name\" onclick=\"" + nameLabelOnClick + "\">" + data.Name + ":</label>     " +
+            "     <p>                                                                                       " +
+            data.Text +
+            "     </p>                                                                                      " +
+            " </div>                                                                                        " +
+            "</div>                                                                                         ";
+
+        return msg;
+    }
+    function appendMessage(msg, isRaw) {
+        if (isRaw) {
+            msg.IsMine = msg.UserId.toLocaleLowerCase() === "@Session["userId"]".toLocaleLowerCase();
+            msg.DateStr = moment(msg.DateStr).format("DD.MM.YYYY HH:mm");
+        }
+
+        var template = buildMessage(msg);
+
+        $msgContainer.append(template);
+    }
+
+    function test() {
+        var data = {
+            Id: "1",
+            UserId: "asdasd1",
+            Text: "Caramba",
+            IsMine: true,
+            Name: "Bethuel",
+            DateStr: "10.10.2010"
+        };
+
+        appendMessage(data);
+
+
+        for (var i = 1; i < 11; i++) {
+            data = {
+                Id: (i + 1) + "",
+                UserId: "user" + (i + 1),
+                Text: "Caramba2",
+                IsMine: false,
+                Name: "Thanos",
+                DateStr: "10.10.2010"
+            };
+            appendMessage(data);
+        }
+    }
+
+    function removeMessage(id) {
+        $("#" + id).remove();
+    }
+
+    function sendMessage() {
+        var msg = $msgText.val();
+
+        var msgData = {
+            UserId: "@Session["userId"]",
+            Message: msg,
+            LocalTime: moment().format()
+        };
+
+        chat.server.send(JSON.stringify(msgData));
+    }
+
+    function scrollToLast() {
+        var $msgs = $msgContainer.children();
+        if ($msgs.length) {
+            var $last = $msgs[$msgs.length - 1];
+            $msgContainer.scrollTop($last.offsetTop);
+        }
+    }
+
+        $(document).ready(function () {
+            $msgContainer = $("#chat-container");
+            $msgText = $("#chat-text");
+
+            for (var i = 0; i < messages.length; i++) {
+                appendMessage(messages[i], true);
+            }
+
+            $.connection.hub.start().done(function () {
+                console.log("yey");
+            });
+
+            scrollToLast();
+        });
+
+</script>
