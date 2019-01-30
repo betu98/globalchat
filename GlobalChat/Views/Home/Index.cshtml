@@ -8,62 +8,68 @@
     }
 }
 
-<style type="text/css">
-    #chat-container {
-        border: 1px solid red;
-        min-height: 200px;
-        border-radius: 4px;
-        padding: 5px;
-        max-height: 300px;
-        overflow-y: auto;
-    }
-
-    .page-header {
-        display: table;
-        width: 100%;
-    }
-
-        .page-header a {
-            float: right;
-        }
-
-    .mine {
-        text-align: right;
-    }
-
-    .message {
-        border: 1px solid red;
-        margin-bottom: 10px;
-        padding: 5px;
-        border-radius: 4px;
-        position: relative;
-    }
-
-        .message .name {
-            cursor: pointer;
-        }
-
-    .mine .name {
-        cursor: default;
-    }
-
-    .message-head {
-    }
-
-    .message-body {
-    }
-</style>
+@Styles.Render("~/Content/chat")
 
 <div class="page-header">
+    <a href="@Url.Action("UserEdit", "User" )">Edit Profile</a>
     <a href="@Url.Action("LogOut", "LogIn" )">Log Out</a>
 </div>
+<div class="page-container">
+    <div class="chat-header">
+        <label>Chat</label>
+    </div>
+    <div id="chat-container">
+    </div>
+    <div class="chat-input">
+        <textarea id="chat-text" onkeypress="(event.which === 13) && sendMessage();"></textarea>
+        <input type="button" value="SEND" onclick="sendMessage();" />
+    </div>
+</div>
 
-<div id="chat-container">
+
+<div class="modal fade" id="user-details-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="entry">
+                        <label>Full Name:</label>
+                        <label name="fullname"></label>
+                    </div>
+
+                    <div class="entry">
+                        <label>Nickname:</label>
+                        <label name="nickname"></label>
+                    </div>
+
+                    <div class="entry">
+                        <label>Email:</label>
+                        <label name="email"></label>
+                    </div>
+
+                    <div class="entry">
+                        <label>Address:</label>
+                        <label name="address"></label>
+                    </div>
+
+                    <div class="entry">
+                        <label>Nationality:</label>
+                        <label name="nationality"></label>
+                    </div>
+
+                    <div class="entry">
+                        <label>Date Of Birth:</label>
+                        <label name="dob"></label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="$('#user-details-modal').modal('hide')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="chat-input">
-    <textarea rows="3" cols="200" id="chat-text"></textarea>
-    <input type="button" value="SEND" onclick="sendMessage();" />
-</div>
+
 
 @Scripts.Render("~/bundles/moment")
 @Scripts.Render("~/bundles/signalr")
@@ -90,7 +96,10 @@
 
     function buildMessage(data) {
         var isMine = data.IsMine ? "mine" : "";
-        var nameLabelOnClick = data.IsMine ? "" : "showUserDetails(\"" + data.UserId + "\"); ";
+        var nameLabelOnClick = data.IsMine ? "" : "showUserDetails(\"" + data.UserId + "\", \"" + data.Id + "\"); ";
+
+        var initials = data.Name.substr(0, 2);
+
         var msg =
 
             " <div class=\"message " + isMine + "\" id=\"" + data.Id + "\">                                 " +
@@ -98,12 +107,15 @@
             "     <lable>" + data.DateStr + "</lable>                                                       " +
             " </div>                                                                                        " +
             " <div class=\"message-body\">                                                                  " +
-            "     <label class=\"name\" onclick=\"" + nameLabelOnClick + "\">" + data.Name + ":</label>     " +
+            " <label  onclick='" + nameLabelOnClick + "'>" + initials + "</label>" +
+            " <div>                                                                                         " +
+            "     <label class=\"name\" onclick='" + nameLabelOnClick + "'>" + data.Name + ":</label>       " +
             "     <p>                                                                                       " +
-            data.Text +
+                    data.Text                                                                                 +
             "     </p>                                                                                      " +
             " </div>                                                                                        " +
-            "</div>                                                                                         ";
+            " </div>                                                                                        " +
+            " </div>                                                                                         ";
 
         return msg;
     }
@@ -116,6 +128,7 @@
         var template = buildMessage(msg);
 
         $msgContainer.append(template);
+        $msgText.val("");
     }
 
     function test() {
@@ -150,7 +163,10 @@
 
     function sendMessage() {
         var msg = $msgText.val();
-
+        if (!msg || !msg.length) {
+            return;
+        }
+        
         var msgData = {
             UserId: "@Session["userId"]",
             Message: msg,
@@ -182,5 +198,28 @@
 
             scrollToLast();
         });
+
+    function showUserDetails(userId, messageId) {
+        $.post(
+            "/User/GetUserData?userId=" + userId,
+            function (result) {
+                if (result.Success) {
+                    $("#user-details-modal label[name='fullname']").text(result.Data.FullName);
+                    $("#user-details-modal label[name='nickname']").text(result.Data.Nickname);
+                    $("#user-details-modal label[name='email']").text(result.Data.Email);
+                    $("#user-details-modal label[name='address']").text(result.Data.Address);
+                    $("#user-details-modal label[name='nationality']").text(result.Data.Nationality);
+
+                    if (result.Data.DateOfBirth) {
+                        $("#user-details-modal label[name='dob']").text(moment(result.Data.DateOfBirth).format("DD.MM.YYYY"));
+                    }
+                    else{
+                        $("#user-details-modal label[name='dob']").text("Not Set");
+                    }
+
+                    $('#user-details-modal').modal('show');
+                }
+            });
+    }
 
 </script>

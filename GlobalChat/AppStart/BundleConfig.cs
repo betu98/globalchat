@@ -29,8 +29,14 @@ namespace GlobalChat
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
+            bundles.Add(new StyleBundle("~/Content/chat").Include(
+                        "~/Content/chat-theme.css"));
+
             bundles.Add(new ScriptBundle("~/bundles/signalr").Include(
                      "~/Scripts/jquery.signalR-{version}.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-datepicker").Include(
+          "~/Scripts/bootstrap-datepicker.js"));
         }
     }
 }

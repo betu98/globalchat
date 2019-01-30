@@ -25,7 +25,6 @@ namespace GlobalChat.SignalR
             var dbMessage = new Message()
             {
                 Id = Guid.NewGuid(),
-                CreatedAtLocal = DateTime.MaxValue,
                 CreatedAtUtc = msg.ToUtcDateTime(),
                 CreatedBy = Guid.Parse(msg.UserId),
                 Text = msg.Message
@@ -45,7 +44,7 @@ namespace GlobalChat.SignalR
                         return null;
                     }
 
-                    userName = $"{user.FirstName} {user.LastName}";
+                    userName =user.Nickname;
 
                     dbModel.SaveChanges();
                 }

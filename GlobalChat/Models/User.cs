@@ -10,7 +10,7 @@ namespace GlobalChat.Models
     public class User
     {
         [DisplayName("First Name")]
-        [Required(ErrorMessage ="First Name is required!")]
+        [Required(ErrorMessage = "First Name is required!")]
         public string FirstName { get; set; }
 
         [DisplayName("Last Name")]
@@ -22,6 +22,7 @@ namespace GlobalChat.Models
         public string Nickname { get; set; }
 
         [Required(ErrorMessage = "Email is required!")]
+        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required!")]
@@ -40,5 +41,6 @@ namespace GlobalChat.Models
 
         [DisplayName("Date Of Birth")]
         public DateTime DateOfBirth { get; set; }
+        public HttpPostedFileBase ProfilePictureFile { get; set; }
     }
 }

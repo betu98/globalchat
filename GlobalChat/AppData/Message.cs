@@ -16,7 +16,6 @@ namespace GlobalChat.AppData
     {
         public System.Guid Id { get; set; }
         public System.Guid CreatedBy { get; set; }
-        public System.DateTime CreatedAtLocal { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
         public string Text { get; set; }
     

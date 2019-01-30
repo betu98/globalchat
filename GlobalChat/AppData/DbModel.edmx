@@ -11,7 +11,6 @@
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CreatedBy" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="CreatedAtLocal" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="CreatedAtUtc" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
@@ -54,24 +53,13 @@
     <edmx:ConceptualModels>
       <Schema Namespace="chatModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="DbModel" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Message" EntityType="chatModel.Message" />
           <EntitySet Name="User" EntityType="chatModel.User" />
+          <EntitySet Name="Message" EntityType="chatModel.Message" />
           <AssociationSet Name="FK_Messagee_User" Association="chatModel.FK_Messagee_User">
             <End Role="User" EntitySet="User" />
             <End Role="Message" EntitySet="Message" />
           </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Message">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="CreatedBy" Type="Guid" Nullable="false" />
-          <Property Name="CreatedAtLocal" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="Text" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="User" Relationship="chatModel.FK_Messagee_User" FromRole="Message" ToRole="User" />
-        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="Id" />
@@ -86,6 +74,16 @@
           <Property Name="Nationality" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Nickname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Message" Relationship="chatModel.FK_Messagee_User" FromRole="User" ToRole="Message" />
+        </EntityType>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="CreatedBy" Type="Guid" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Text" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="chatModel.FK_Messagee_User" FromRole="Message" ToRole="User" />
         </EntityType>
         <Association Name="FK_Messagee_User">
           <End Type="chatModel.User" Role="User" Multiplicity="1" />
@@ -105,17 +103,6 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="chatModelStoreContainer" CdmEntityContainer="DbModel">
-          <EntitySetMapping Name="Message">
-            <EntityTypeMapping TypeName="chatModel.Message">
-              <MappingFragment StoreEntitySet="Message">
-                <ScalarProperty Name="Text" ColumnName="Text" />
-                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
-                <ScalarProperty Name="CreatedAtLocal" ColumnName="CreatedAtLocal" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="User">
             <EntityTypeMapping TypeName="chatModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -127,6 +114,16 @@
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Message">
+            <EntityTypeMapping TypeName="chatModel.Message">
+              <MappingFragment StoreEntitySet="Message">
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

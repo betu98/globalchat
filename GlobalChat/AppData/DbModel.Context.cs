@@ -22,10 +22,10 @@ namespace GlobalChat.AppData
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            
+            throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Message> Message { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Message> Message { get; set; }
     }
 }

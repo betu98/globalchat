@@ -20,7 +20,7 @@ namespace GlobalChat.Controllers
                          {
                              Id = t.Id,
                              DateStr = t.CreatedAtUtc.ToString("o"),
-                             Name = $"{t.User.FirstName} {t.User.LastName}",
+                             Name = t.User.Nickname,
                              Text = t.Text,
                              UserId = t.CreatedBy
                          }
@@ -33,20 +33,6 @@ namespace GlobalChat.Controllers
 
                 }
             }
-
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
 
             return View();
         }
